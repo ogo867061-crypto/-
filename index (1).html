@@ -1,0 +1,224 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تحدي الطرح</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Tahoma,Arial;
+ background:linear-gradient(135deg,#dbeafe,#fce7f3);
+ text-align:center;
+ padding:20px;
+ color:#263248;
+}
+.container{
+ max-width:450px;
+ margin:20px auto;
+ background:white;
+ padding:22px;
+ border-radius:25px;
+ box-shadow:0 8px 25px #0002;
+}
+h1{color:#6546c7}
+.teams{
+ display:flex;
+ gap:12px;
+}
+.team{
+ flex:1;
+ padding:17px 5px;
+ border-radius:18px;
+ font-weight:bold;
+}
+.boys{background:#dbeafe;color:#2563eb}
+.girls{background:#fce7f3;color:#db2777}
+.points{font-size:30px;margin:10px}
+.question{
+ background:#f1f5f9;
+ border-radius:20px;
+ padding:25px;
+ font-size:48px;
+ font-weight:bold;
+ margin:25px 0;
+ direction:ltr;
+}
+input{
+ width:100%;
+ padding:15px;
+ border:2px solid #ddd;
+ border-radius:12px;
+ font-size:25px;
+ text-align:center;
+}
+button{
+ width:100%;
+ padding:14px;
+ border:0;
+ border-radius:12px;
+ font-size:18px;
+ font-weight:bold;
+ margin-top:12px;
+}
+.blue{background:#3b82f6;color:white}
+.pink{background:#ec4899;color:white}
+.green{background:#10b981;color:white}
+.gray{background:#e2e8f0;color:#334155}
+#message{font-size:19px;font-weight:bold;margin:20px 0}
+#timer{font-size:23px;color:#dc2626;font-weight:bold}
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>🏆 تحدي الطرح</h1>
+<p>مين الأذكى؟ الأولاد أم البنات؟ 😎</p>
+
+<div class="teams">
+ <div class="team boys">
+  👦 الأولاد
+  <div class="points" id="boys">0</div>
+  نقطة
+ </div>
+ <div class="team girls">
+  👧 البنات
+  <div class="points" id="girls">0</div>
+  نقطة
+ </div>
+</div>
+
+<div id="timer">⏱️ 60 ثانية</div>
+
+<div class="question" id="question">9 − 4 = ؟</div>
+
+<input type="number" id="answer" placeholder="اكتب الإجابة">
+
+<button class="blue" onclick="answerQuestion('boys')">
+👦 إجابة الأولاد
+</button>
+
+<button class="pink" onclick="answerQuestion('girls')">
+👧 إجابة البنات
+</button>
+
+<div id="message">ابدأوا التحدي! 🔥</div>
+
+<button class="green" onclick="startGame()">▶️ ابدأ التحدي</button>
+<button class="gray" onclick="resetGame()">🔄 إعادة اللعبة</button>
+
+</div>
+
+<script>
+let result;
+let boys=0;
+let girls=0;
+let time=60;
+let running=false;
+let answered=false;
+let timer;
+
+function newQuestion(){
+ let a=Math.floor(Math.random()*9)+1;
+ let b=Math.floor(Math.random()*(a+1));
+ result=a-b;
+
+ document.getElementById("question").textContent=
+ a+" − "+b+" = ؟";
+
+ document.getElementById("answer").value="";
+ answered=false;
+}
+
+function answerQuestion(team){
+ if(!running){
+  document.getElementById("message").textContent=
+  "اضغط ابدأ التحدي أولاً! ▶️";
+  return;
+ }
+
+ if(answered)return;
+
+ let value=document.getElementById("answer").value;
+
+ if(value===""){
+  document.getElementById("message").textContent=
+  "اكتب الإجابة أولاً ✏️";
+  return;
+ }
+
+ if(Number(value)===result){
+  if(team==="boys"){
+   boys++;
+   document.getElementById("boys").textContent=boys;
+   document.getElementById("message").textContent=
+   "إجابة صحيحة! نقطة للأولاد 👦🎉";
+  }else{
+   girls++;
+   document.getElementById("girls").textContent=girls;
+   document.getElementById("message").textContent=
+   "إجابة صحيحة! نقطة للبنات 👧🎉";
+  }
+  answered=true;
+  setTimeout(()=>{
+   if(running)newQuestion();
+  },800);
+ }else{
+  document.getElementById("message").textContent=
+  "إجابة خاطئة! حاولوا مرة أخرى 💪";
+ }
+}
+
+function startGame(){
+ if(running)return;
+
+ running=true;
+ document.getElementById("message").textContent=
+ "بدأ التحدي! بالتوفيق للجميع 🔥";
+
+ timer=setInterval(()=>{
+  time--;
+  document.getElementById("timer").textContent=
+  "⏱️ "+time+" ثانية";
+
+  if(time<=0){
+   endGame();
+  }
+ },1000);
+}
+
+function endGame(){
+ running=false;
+ clearInterval(timer);
+
+ let winner;
+ if(boys>girls)winner="🏆 الأولاد فازوا!";
+ else if(girls>boys)winner="🏆 البنات فازوا!";
+ else winner="🤝 تعادل الفريقان!";
+
+ document.getElementById("message").textContent=
+ "انتهى التحدي! "+winner+
+ " النتيجة: الأولاد "+boys+" - البنات "+girls;
+}
+
+function resetGame(){
+ clearInterval(timer);
+ boys=0;
+ girls=0;
+ time=60;
+ running=false;
+
+ document.getElementById("boys").textContent=0;
+ document.getElementById("girls").textContent=0;
+ document.getElementById("timer").textContent="⏱️ 60 ثانية";
+ document.getElementById("message").textContent="جاهزون للتحدي؟ 🔥";
+
+ newQuestion();
+}
+
+newQuestion();
+</script>
+</body>
+</html>
